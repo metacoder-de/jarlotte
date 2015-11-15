@@ -20,12 +20,7 @@ public class Stage2 {
             jarUrls.add(libFile.toURI().toURL());
         }
 
-        final URL[] urlsAsArray = new URL[jarUrls.size()];
-
-        for(int i = 0; i < jarUrls.size(); i++){     // TODO use toArray with given size.
-            urlsAsArray[i] = jarUrls.get(i);
-        }
-
+        final URL[] urlsAsArray = jarUrls.toArray(new URL[jarUrls.size()]);
 
         final ClassLoader jarlotteClassLoader = new URLClassLoader(urlsAsArray, getClass().getClassLoader());
 
