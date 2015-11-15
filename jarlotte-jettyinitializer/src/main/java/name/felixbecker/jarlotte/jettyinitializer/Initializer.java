@@ -19,6 +19,8 @@ public class Initializer implements JarlotteInitializer {
             System.out.println("Initializer: " + url);
         }
 
+        System.out.println("Webapp root dir: " + webAppDir.getAbsolutePath());
+
         try {
             /*
             Server server = new Server(8080);
@@ -32,6 +34,16 @@ public class Initializer implements JarlotteInitializer {
             server.join();
             */
             Server server = new Server(8080);
+
+
+            WebAppContext wac = new WebAppContext();
+            wac.setResourceBase(webAppDir.getAbsolutePath());
+            wac.setDescriptor(webAppDir.getAbsolutePath() + "WEB-INF/web.xml");
+            wac.setContextPath("/");
+            wac.setParentLoaderPriority(true);
+
+            server.setHandler(wac);
+
             server.start();
             server.join();
         } catch(Exception e){
