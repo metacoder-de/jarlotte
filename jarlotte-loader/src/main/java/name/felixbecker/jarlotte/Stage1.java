@@ -1,13 +1,9 @@
 package name.felixbecker.jarlotte;
 
+import name.felixbecker.jarlotte.utils.ZipUtil;
+
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public class Stage1 {
 
@@ -23,7 +19,7 @@ public class Stage1 {
 
         tempWorkingDir.deleteOnExit();
 
-        unzip(tempWorkingDir);
+        ZipUtil.unzip(new File(getClass().getProtectionDomain().getCodeSource().getLocation().getFile()), tempWorkingDir);
         System.out.println(tempWorkingDir);
 
 
@@ -52,50 +48,6 @@ public class Stage1 {
 
     }
 
-    public void unzip(File rootDir) throws IOException {
 
-        // Open the zip file
-        final ZipFile zipFile = new ZipFile(getClass().getProtectionDomain().getCodeSource().getLocation().getFile());
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-        while (entries.hasMoreElements()) {
-
-            final ZipEntry zipEntry = entries.nextElement();
-
-            String name = zipEntry.getName();
-
-            final File file = new File(rootDir, name);
-
-            if (name.endsWith("/")) { // Does that work on windows?
-                if (!file.exists() && !file.mkdirs()) {
-                    throw new RuntimeException("Failed to create directories for " + file.getAbsolutePath());
-                }
-                continue;
-            }
-
-            final File parentDir = file.getParentFile();
-            if (parentDir != null && !parentDir.exists()) {
-                if (!parentDir.mkdirs()) {
-                    throw new RuntimeException("Couldn't create parent directory for file " + file.getAbsolutePath());
-                }
-            }
-
-            final InputStream is = zipFile.getInputStream(zipEntry);
-            final FileOutputStream fos = new FileOutputStream(file);
-            byte[] bytes = new byte[1024];
-            int length;
-
-            while ((length = is.read(bytes)) >= 0) {
-                fos.write(bytes, 0, length);
-            }
-
-            is.close();
-            fos.close();
-
-        }
-
-        zipFile.close();
-
-    }
 
 }

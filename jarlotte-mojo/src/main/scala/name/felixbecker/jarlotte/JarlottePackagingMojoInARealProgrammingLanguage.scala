@@ -1,15 +1,14 @@
 package name.felixbecker.jarlotte
 
-import java.io.File
+import java.io.{FileWriter, File}
 import java.nio.file.Paths
-import java.util
 
 import net.lingala.zip4j.core.ZipFile
 import net.lingala.zip4j.model.ZipParameters
 import org.apache.maven.plugin.MojoFailureException
-import org.eclipse.aether.artifact.{Artifact, DefaultArtifact}
+import org.eclipse.aether.artifact.DefaultArtifact
 import org.eclipse.aether.collection.CollectRequest
-import org.eclipse.aether.graph.{Dependency, DependencyFilter}
+import org.eclipse.aether.graph.Dependency
 import org.eclipse.aether.resolution.{ArtifactRequest, ArtifactResult, DependencyRequest}
 import org.eclipse.aether.util.artifact.JavaScopes
 import org.eclipse.aether.util.filter.DependencyFilterUtils
@@ -25,7 +24,8 @@ class JarlottePackagingMojoInARealProgrammingLanguage(mojo: JarPackagingMojo) {
 
 
     val targetDir = Paths.get(mojo.getProject.getBuild.getDirectory).toFile
-    val buildDir = Paths.get(mojo.getProject.getBuild.getDirectory, mojo.getProject.getBuild.getFinalName).toFile
+    val projectFinalName: String = mojo.getProject.getBuild.getFinalName
+    val buildDir = Paths.get(mojo.getProject.getBuild.getDirectory, projectFinalName).toFile
 
     if(!buildDir.exists()){
       throw new MojoFailureException(s"Couldn't find target directory $targetDir. Please make sure that the maven war plugin ran in this phase before (order in xml matters, see effective pom in doubt)!")
@@ -51,10 +51,18 @@ class JarlottePackagingMojoInARealProgrammingLanguage(mojo: JarPackagingMojo) {
     zipFile.addFolder(Paths.get(loaderZipFileExtractionDir.getAbsolutePath, "name").toFile, zipParameters)
     val metaInfZipParameters = new ZipParameters
     metaInfZipParameters.setRootFolderInZip("META-INF")
-    zipFile.addFile(Paths.get(loaderZipFileExtractionDir.getAbsolutePath, "MANIFEST.MF").toFile, metaInfZipParameters)
+
+    val manifestFile = Paths.get(loaderZipFileExtractionDir.getAbsolutePath, "MANIFEST.MF").toFile
+    val manifestFileWriter = new FileWriter(manifestFile, true) // append to existing manifest
+
+    manifestFileWriter.append(s"Webapp-Dir-Name: $projectFinalName")
+
+    manifestFileWriter.close()
+
+    zipFile.addFile(manifestFile, metaInfZipParameters)
 
 
-    mojo.getLog.info(s"target directory is ${mojo.getProject.getBuild.getDirectory} - ${mojo.getProject.getBuild.getFinalName}")
+    mojo.getLog.info(s"target directory is ${mojo.getProject.getBuild.getDirectory} - ${projectFinalName}")
 
   }
 
