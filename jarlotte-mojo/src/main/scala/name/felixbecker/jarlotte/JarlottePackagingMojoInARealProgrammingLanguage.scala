@@ -1,9 +1,16 @@
 package name.felixbecker.jarlotte
 
+import java.io.File
+import java.nio.file.Paths
+import java.util
+
+import net.lingala.zip4j.core.ZipFile
+import net.lingala.zip4j.model.ZipParameters
+import org.apache.maven.plugin.MojoFailureException
 import org.eclipse.aether.artifact.{Artifact, DefaultArtifact}
 import org.eclipse.aether.collection.CollectRequest
 import org.eclipse.aether.graph.{Dependency, DependencyFilter}
-import org.eclipse.aether.resolution.DependencyRequest
+import org.eclipse.aether.resolution.{ArtifactRequest, ArtifactResult, DependencyRequest}
 import org.eclipse.aether.util.artifact.JavaScopes
 import org.eclipse.aether.util.filter.DependencyFilterUtils
 
@@ -14,27 +21,83 @@ class JarlottePackagingMojoInARealProgrammingLanguage(mojo: JarPackagingMojo) {
 
   def execute(): Unit = {
 
-      mojo.getLog.info("===========================> " + mojo.getInitializerArtifact)
+    mojo.getLog.info("===========================> " + mojo.getInitializerArtifact)
 
-      val artifact = new DefaultArtifact(s"${mojo.getInitializerArtifact.getGroupId}:${mojo.getInitializerArtifact.getArtifactId}:${mojo.getInitializerArtifact.getVersion}")
 
-      val classpathFlter = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE)     // ??? from example TODO - maybe thats the reason why i don't find my initializer
+    val targetDir = Paths.get(mojo.getProject.getBuild.getDirectory).toFile
+    val buildDir = Paths.get(mojo.getProject.getBuild.getDirectory, mojo.getProject.getBuild.getFinalName).toFile
 
-      val collectRequest = new CollectRequest
-      collectRequest.setRoot(new Dependency(artifact, JavaScopes.COMPILE))
-      collectRequest.setRepositories(mojo.getProjectRepos)
+    if(!buildDir.exists()){
+      throw new MojoFailureException(s"Couldn't find target directory $targetDir. Please make sure that the maven war plugin ran in this phase before (order in xml matters, see effective pom in doubt)!")
+    }
 
-      val dependencyRequest = new DependencyRequest(collectRequest, classpathFlter)
-      val artifactResults = mojo.getRepoSystem.resolveDependencies(mojo.getRepoSession, dependencyRequest).getArtifactResults
+    /* Step 1: Add WAR-Content to jar */
+    val zipFile = new ZipFile(Paths.get(targetDir.getAbsolutePath, "jarlotte.jar").toFile)
+    val zipParameters = new ZipParameters
+    zipFile.addFolder(buildDir, zipParameters)
 
-      import scala.collection.JavaConversions._
+    /* Step 2: Add Jarlotte stuff */
 
-      artifactResults.foreach { artifactResult =>
-        mojo.getLog.info("Initializer dependencies are: " + artifactResult.getArtifact + " resolved to " + artifactResult.getArtifact.getFile)
-      }
+    val ownVersion = mojo.getPluginDescriptor.getVersion
+    val loaderJarResolutionResult = resolveArtifact(s"name.felixbecker:jarlotte-loader:$ownVersion")
+    println(s"Loader jar resolution ${loaderJarResolutionResult.getArtifact.getFile}")
 
-      mojo.getProject.getArtifacts.foreach { projectArtifact =>
-        println(s"Jar has to contain ${projectArtifact.getFile}")
-      }
+
+    val loaderZipFileExtractionDir = new File(mojo.getProject.getBuild.getDirectory, "jarlotte-loader-extracted")
+    val loaderZipFile = new ZipFile(loaderJarResolutionResult.getArtifact.getFile)
+    println(s"Extracting ${loaderZipFile.getFile} to $loaderZipFileExtractionDir")
+    loaderZipFile.extractAll(loaderZipFileExtractionDir.getAbsolutePath)
+
+    zipFile.addFolder(Paths.get(loaderZipFileExtractionDir.getAbsolutePath, "name").toFile, zipParameters)
+    val metaInfZipParameters = new ZipParameters
+    metaInfZipParameters.setRootFolderInZip("META-INF")
+    zipFile.addFile(Paths.get(loaderZipFileExtractionDir.getAbsolutePath, "MANIFEST.MF").toFile, metaInfZipParameters)
+
+
+    mojo.getLog.info(s"target directory is ${mojo.getProject.getBuild.getDirectory} - ${mojo.getProject.getBuild.getFinalName}")
+
+  }
+
+  def resolveArtifact(artifactCoords: String): ArtifactResult = {
+
+    val artifact = new DefaultArtifact(artifactCoords)
+    val artifactRequest = new ArtifactRequest()
+    artifactRequest.setArtifact(artifact)
+    artifactRequest.setRepositories(mojo.getProjectRepos)
+
+    mojo.getRepoSystem.resolveArtifact(mojo.getRepoSession, artifactRequest)
+
+  }
+
+  def resolveArtifacts(artifactCoords: String): List[ArtifactResult] = {
+
+    import scala.collection.JavaConversions._
+
+    val artifact = new DefaultArtifact(artifactCoords)
+
+    val classpathFlter = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE) // ??? from example TODO - maybe thats the reason why i don't find my initializer
+
+    val collectRequest = new CollectRequest
+    collectRequest.setRoot(new Dependency(artifact, JavaScopes.COMPILE))
+    collectRequest.setRepositories(mojo.getProjectRepos)
+
+    val dependencyRequest = new DependencyRequest(collectRequest, classpathFlter)
+    val artifactResults = mojo.getRepoSystem.resolveDependencies(mojo.getRepoSession, dependencyRequest).getArtifactResults
+
+    /*
+    artifactResults.foreach { artifactResult =>
+      mojo.getLog.info("Initializer dependencies are: " + artifactResult.getArtifact + " resolved to " + artifactResult.getArtifact.getFile)
+    }
+
+    mojo.getProject.getArtifacts.foreach { projectArtifact =>
+      println(s"Jar has to contain artifact ${projectArtifact.getFile}")
+    }
+
+    mojo.getProject.getResources.foreach { resource =>
+      println(s"Jar has to contain resource ${resource}")
+    }
+    */
+
+    artifactResults.toList
   }
 }
