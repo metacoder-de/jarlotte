@@ -11,5 +11,12 @@
 
     <artifactId>jarlotte-loader</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>name.felixbecker</groupId>
+            <artifactId>jarlotte-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

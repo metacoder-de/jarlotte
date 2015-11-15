@@ -3,7 +3,11 @@ package name.felixbecker.jarlotte;
 import name.felixbecker.jarlotte.utils.ZipUtil;
 
 import java.io.File;
+import java.net.URL;
 import java.nio.file.Files;
+import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 public class Stage1 {
 
@@ -23,30 +27,28 @@ public class Stage1 {
         System.out.println(tempWorkingDir);
 
 
+
+        // Read Manifest to get the web project name
+        final Properties jarlotteProperties = new Properties();
+        jarlotteProperties.load(getClass().getResourceAsStream("/META-INF/jarlotte.properties"));
+
+        System.out.println("Path of the webapp is: " + jarlotteProperties.getProperty("Webapp-Dir-Name"));
+        System.out.println("Initializer Class is: " + jarlotteProperties.getProperty("Initializer-Class"));
+
+
+
         /*Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
                 System.out.println("Shutdown hook - deleting working directory " + tempWorkingDir);
-                Stage1.deleteRecursively(tempWorkingDir);
+                FileUtils.deleteRecursively(tempWorkingDir);
             }
         }));*/
 
-    }
-
-    public static void deleteRecursively(File f){
-
-        if(f.isDirectory()){
-            for(File child : f.listFiles()){
-                deleteRecursively(child);
-            }
-        }
-
-        if(!f.delete()){
-            System.err.println("Deleting file " + f.getAbsolutePath() + " failed!");
-        } else {
-            System.out.println("Deleted file " + f.getAbsolutePath());
-        }
+        new Stage2().run(new File(tempWorkingDir, jarlotteProperties.getProperty("Webapp-Dir-Name")), new File(tempWorkingDir, "jarlotte-lib"), jarlotteProperties.getProperty("Initializer-Class"));
 
     }
+
+
 
 
 

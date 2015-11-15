@@ -25,11 +25,12 @@
                 <configuration>
 
                     <initializerArtifact>
-                        <groupId>org.icefaces</groupId>
-                        <artifactId>icefaces-facelets</artifactId>
-                        <version>1.8.2</version>
+                        <groupId>name.felixbecker</groupId>
+                        <artifactId>jarlotte-jettyinitializer</artifactId>
+                        <version>${project.version}</version>
                     </initializerArtifact>
-                    <initializerClass>name.felixbecker.jarlotte.jettyinitializer.Iniitalizer</initializerClass>
+
+                    <initializerClass>name.felixbecker.jarlotte.jettyinitializer.Initializer</initializerClass>
 
                 </configuration>
                 <executions>

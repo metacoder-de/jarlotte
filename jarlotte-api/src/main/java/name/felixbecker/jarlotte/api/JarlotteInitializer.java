@@ -4,6 +4,6 @@ import java.io.File;
 
 public interface JarlotteInitializer {
 
-    void initialize(File extractedJarTempDir);
+    void initialize(File webAppDir);
 
 }
