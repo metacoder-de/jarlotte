@@ -36,6 +36,7 @@
 
     <scm>
         <connection>scm:git:git@github.com:fbe/jarlotte.git</connection>
+	<tag>HEAD</tag>
     </scm>
 
 </project>
