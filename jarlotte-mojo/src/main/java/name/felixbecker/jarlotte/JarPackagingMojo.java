@@ -10,6 +10,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -22,6 +23,9 @@ public class JarPackagingMojo extends AbstractMojo {
 
     @Parameter(required = true)
     private String initializerClass;
+
+    @Parameter(name = "initializerArtifact", readonly = true)
+    private InitializerArtifact initializerArtifact;
 
     @Parameter(defaultValue = "${project}", readonly = true )
     private MavenProject project;
@@ -38,16 +42,16 @@ public class JarPackagingMojo extends AbstractMojo {
     @Parameter(readonly = true, defaultValue = "${project.remoteProjectRepositories}")
     private List<RemoteRepository> projectRepos;
 
-    @Parameter(readonly = true)
-    private List<RemoteRepository> pluginRepos;
-
-
-    @Parameter(name = "initializerArtifact", readonly = true)
-    private InitializerArtifact initializerArtifact;
+    @Component
+    private MavenProjectHelper projectHelper;
 
 
     public String getInitializerClass() {
         return initializerClass;
+    }
+
+    public InitializerArtifact getInitializerArtifact() {
+        return initializerArtifact;
     }
 
     public MavenProject getProject() {
@@ -70,12 +74,8 @@ public class JarPackagingMojo extends AbstractMojo {
         return projectRepos;
     }
 
-    public List<RemoteRepository> getPluginRepos() {
-        return pluginRepos;
-    }
-
-    public InitializerArtifact getInitializerArtifact() {
-        return initializerArtifact;
+    public MavenProjectHelper getProjectHelper() {
+        return projectHelper;
     }
 
     @Override
