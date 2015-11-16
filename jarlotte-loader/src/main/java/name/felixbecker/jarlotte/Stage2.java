@@ -15,6 +15,8 @@ public class Stage2 {
 
         System.out.println("Starting stage 2 on data structure " + webappDir.getAbsolutePath());
 
+        System.out.println("Building class loader for initializer");
+
         final List<URL> jarUrls = new ArrayList<URL>();
 
         for(File libFile: jarlotteLibDir.listFiles()){
@@ -25,8 +27,8 @@ public class Stage2 {
 
         final ClassLoader jarlotteClassLoader = new URLClassLoader(urlsAsArray, getClass().getClassLoader());
 
+        System.out.println("Entering Stage 3");
         new Stage3().run(webappDir, initializerClassName, jarlotteClassLoader);
-
 
     }
 

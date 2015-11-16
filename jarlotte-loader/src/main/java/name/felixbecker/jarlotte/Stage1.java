@@ -21,10 +21,8 @@ public class Stage1 {
 
         tempWorkingDir.deleteOnExit();
 
+        System.out.println("Extracting jar file to the temporary working directory " + tempWorkingDir);
         ZipUtil.unzip(new File(getClass().getProtectionDomain().getCodeSource().getLocation().getFile()), tempWorkingDir);
-        System.out.println(tempWorkingDir);
-
-
 
         // Read Manifest to get the web project name
         final Properties jarlotteProperties = new Properties();
@@ -33,7 +31,7 @@ public class Stage1 {
         System.out.println("Path of the webapp is: " + jarlotteProperties.getProperty("Webapp-Dir-Name"));
         System.out.println("Initializer Class is: " + jarlotteProperties.getProperty("Initializer-Class"));
 
-
+        System.out.println("Registering shutdown hook");
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
@@ -46,9 +44,5 @@ public class Stage1 {
         new Stage2().run(new File(tempWorkingDir, jarlotteProperties.getProperty("Webapp-Dir-Name")), new File(tempWorkingDir, "jarlotte-lib"), jarlotteProperties.getProperty("Initializer-Class"));
 
     }
-
-
-
-
 
 }
