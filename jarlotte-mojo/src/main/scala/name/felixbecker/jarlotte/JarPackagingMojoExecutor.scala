@@ -78,6 +78,8 @@ class JarPackagingMojoExecutor(mojo: JarPackagingMojo) {
       mojo.getLog.info(s"Adding $file to $jarlotteZipFileName")
     }
 
+    /* attach jarlotte artifact */
+    mojo.getProjectHelper.attachArtifact(mojo.getProject, "jar", "jarlotte", zipFile.getFile)
   }
 
   def resolveArtifact(artifactCoords: String): ArtifactResult = {
