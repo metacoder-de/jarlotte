@@ -14,13 +14,7 @@ public class Initializer implements JarlotteInitializer {
 
     public void initialize(File webAppDir) {
 
-        System.out.println("I am the classloader " + getClass().getClassLoader());
         URLClassLoader urlClassLoader = (URLClassLoader) getClass().getClassLoader();
-        for(URL url : urlClassLoader.getURLs()){
-            System.out.println("Initializer: " + url);
-        }
-
-        System.out.println("Webapp root dir: " + webAppDir.getAbsolutePath());
 
         try {
             Server server = new Server(8080);
@@ -35,6 +29,7 @@ public class Initializer implements JarlotteInitializer {
 
             server.start();
             server.join();
+
         } catch(Exception e){
             e.printStackTrace();
         }

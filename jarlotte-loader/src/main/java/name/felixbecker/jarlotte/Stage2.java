@@ -12,6 +12,7 @@ import java.util.List;
 public class Stage2 {
 
     public void run(File webappDir, File jarlotteLibDir, String initializerClassName) throws Exception {
+
         System.out.println("Starting stage 2 on data structure " + webappDir.getAbsolutePath());
 
         final List<URL> jarUrls = new ArrayList<URL>();
@@ -23,10 +24,6 @@ public class Stage2 {
         final URL[] urlsAsArray = jarUrls.toArray(new URL[jarUrls.size()]);
 
         final ClassLoader jarlotteClassLoader = new URLClassLoader(urlsAsArray, getClass().getClassLoader());
-
-        for(URL u : ((URLClassLoader)jarlotteClassLoader).getURLs()){
-            System.out.println("Classloader URL: " + u);
-        }
 
         new Stage3().run(webappDir, initializerClassName, jarlotteClassLoader);
 

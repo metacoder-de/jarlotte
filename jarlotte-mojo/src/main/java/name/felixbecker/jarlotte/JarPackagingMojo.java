@@ -80,7 +80,7 @@ public class JarPackagingMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        new JarlottePackagingMojoInARealProgrammingLanguage(this).execute();
+        new JarPackagingMojoExecutor(this).execute();
     }
 
 }

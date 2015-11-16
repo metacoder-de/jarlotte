@@ -14,7 +14,7 @@
 
     <build>
 
-        <finalName>custom-finalname-for-war</finalName>
+        <finalName>packagingtest</finalName>
 
         <plugins>
             <plugin>

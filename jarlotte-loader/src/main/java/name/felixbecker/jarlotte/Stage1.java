@@ -1,13 +1,11 @@
 package name.felixbecker.jarlotte;
 
+import name.felixbecker.jarlotte.utils.FileUtils;
 import name.felixbecker.jarlotte.utils.ZipUtil;
 
 import java.io.File;
-import java.net.URL;
 import java.nio.file.Files;
 import java.util.Properties;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 public class Stage1 {
 
@@ -37,12 +35,13 @@ public class Stage1 {
 
 
 
-        /*Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
-                System.out.println("Shutdown hook - deleting working directory " + tempWorkingDir);
+                System.out.println("Shutdown recognized - deleting working directory " + tempWorkingDir);
                 FileUtils.deleteRecursively(tempWorkingDir);
+                System.out.println("Deleted " + tempWorkingDir + " successfully");
             }
-        }));*/
+        }));
 
         new Stage2().run(new File(tempWorkingDir, jarlotteProperties.getProperty("Webapp-Dir-Name")), new File(tempWorkingDir, "jarlotte-lib"), jarlotteProperties.getProperty("Initializer-Class"));
 

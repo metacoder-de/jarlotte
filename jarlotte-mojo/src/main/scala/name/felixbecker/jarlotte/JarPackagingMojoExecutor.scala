@@ -14,26 +14,21 @@ import org.eclipse.aether.resolution.{ArtifactRequest, ArtifactResult, Dependenc
 import org.eclipse.aether.util.artifact.JavaScopes
 import org.eclipse.aether.util.filter.DependencyFilterUtils
 
-/**
-  * Created by becker on 11/15/15.
-  */
-class JarlottePackagingMojoInARealProgrammingLanguage(mojo: JarPackagingMojo) {
+class JarPackagingMojoExecutor(mojo: JarPackagingMojo) {
 
   def execute(): Unit = {
-
-    mojo.getLog.info("===========================> " + mojo.getInitializerArtifact)
-
 
     val targetDir = Paths.get(mojo.getProject.getBuild.getDirectory).toFile
     val projectFinalName: String = mojo.getProject.getBuild.getFinalName
     val buildDir = Paths.get(mojo.getProject.getBuild.getDirectory, projectFinalName).toFile
+    val jarlotteZipFileName = s"$projectFinalName-jarlotte.jar"
 
     if(!buildDir.exists()){
       throw new MojoFailureException(s"Couldn't find target directory $targetDir. Please make sure that the maven war plugin ran in this phase before (order in xml matters, see effective pom in doubt)!")
     }
 
     /* Step 1: Add WAR-Content to jar */
-    val zipFile = new ZipFile(Paths.get(targetDir.getAbsolutePath, "jarlotte.jar").toFile)
+    val zipFile = new ZipFile(Paths.get(targetDir.getAbsolutePath, jarlotteZipFileName).toFile)
     val zipParameters = new ZipParameters
     zipFile.addFolder(buildDir, zipParameters)
 
@@ -41,12 +36,12 @@ class JarlottePackagingMojoInARealProgrammingLanguage(mojo: JarPackagingMojo) {
 
     val ownVersion = mojo.getPluginDescriptor.getVersion
     val loaderJarResolutionResult = resolveArtifact(s"name.felixbecker:jarlotte-loader:$ownVersion")
-    println(s"Loader jar resolution ${loaderJarResolutionResult.getArtifact.getFile}")
+    mojo.getLog.info(s"Loader jar resolution ${loaderJarResolutionResult.getArtifact.getFile}")
 
 
     val loaderZipFileExtractionDir = new File(mojo.getProject.getBuild.getDirectory, "jarlotte-loader-extracted")
     val loaderZipFile = new ZipFile(loaderJarResolutionResult.getArtifact.getFile)
-    println(s"Extracting ${loaderZipFile.getFile} to $loaderZipFileExtractionDir")
+    mojo.getLog.info(s"Extracting ${loaderZipFile.getFile} to $loaderZipFileExtractionDir")
     loaderZipFile.extractAll(loaderZipFileExtractionDir.getAbsolutePath)
 
     zipFile.addFolder(Paths.get(loaderZipFileExtractionDir.getAbsolutePath, "name").toFile, zipParameters)
@@ -80,7 +75,7 @@ class JarlottePackagingMojoInARealProgrammingLanguage(mojo: JarPackagingMojo) {
     initializerArtifacts.foreach { af =>
       val file = af.getArtifact.getFile
       zipFile.addFile(file, jarlotteLibZipParameters)
-      mojo.getLog.info(s"Adding $file the jarlotte zip")
+      mojo.getLog.info(s"Adding $file to $jarlotteZipFileName")
     }
 
   }
