@@ -34,4 +34,8 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <scm>
+        <connection>scm:git:git@github.com:fbe/jarlotte.git</connection>
+    </scm>
+
 </project>
