@@ -32,7 +32,7 @@
 
     <groupId>name.felixbecker</groupId>
     <artifactId>jarlotte</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
     <name>${project.artifactId}</name>
     <description>
         
@@ -71,7 +71,7 @@
     <scm>
         <connection>scm:git:git@github.com:fbe/jarlotte.git</connection>
         <developerConnection>scm:git:git@github.com:fbe/jarlotte.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>jarlotte-1.2</tag>
     </scm>
 
     <issueManagement>
