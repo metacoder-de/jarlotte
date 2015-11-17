@@ -17,6 +17,7 @@ package name.felixbecker.jarlotte.jettyinitializer;
 import name.felixbecker.jarlotte.api.JarlotteInitializer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.Jetty;
+import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
 
@@ -28,16 +29,33 @@ public class Initializer implements JarlotteInitializer {
 
     public void initialize(File webAppDir) {
 
-        URLClassLoader urlClassLoader = (URLClassLoader) getClass().getClassLoader();
-
         try {
-            Server server = new Server(8080);
+
+            final String jettyPortProperty = System.getProperty("jetty.port");
+
+            final int jettyPort;
+
+            if(jettyPortProperty != null){
+                System.out.println("Using custom jetty.port " + jettyPortProperty);
+                jettyPort = Integer.parseInt(jettyPortProperty);
+            } else {
+                System.out.println("Starting jetty on port 8080, use -Djetty.port=<port> to override");
+                jettyPort = 8080;
+            }
+
+            Server server = new Server(jettyPort);
+
+
+            // required for working JSPs
+            final Configuration.ClassList classlist = Configuration.ClassList.setServerDefault( server );
+            classlist.addBefore("org.eclipse.jetty.webapp.JettyWebXmlConfiguration", "org.eclipse.jetty.annotations.AnnotationConfiguration");
+
 
             WebAppContext wac = new WebAppContext();
             wac.setResourceBase(webAppDir.getAbsolutePath());
             wac.setDescriptor(webAppDir.getAbsolutePath() + "WEB-INF/web.xml");
             wac.setContextPath("/");
-            wac.setClassLoader(new WebAppClassLoader(urlClassLoader, wac));
+            wac.setClassLoader(new WebAppClassLoader(getClass().getClassLoader(), wac));
 
             server.setHandler(wac);
 
