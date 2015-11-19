@@ -37,7 +37,7 @@
     <description>
         
     </description>
-    <url>https://github.com/fbe/jarlotte</url>
+    <url>https://github.com/metacoder/jarlotte</url>
 
     <developers>
         <developer>
@@ -69,14 +69,14 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:git@github.com:fbe/jarlotte.git</connection>
-        <developerConnection>scm:git:git@github.com:fbe/jarlotte.git</developerConnection>
+        <connection>scm:git:git@github.com:metacoder/jarlotte.git</connection>
+        <developerConnection>scm:git:git@github.com:metacoder/jarlotte.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
         <system>Github Issue Tracker</system>
-        <url>https://github.com/fbe/jarlotte/issues</url>
+        <url>https://github.com/metacoder/jarlotte/issues</url>
     </issueManagement>
 
     <build>
