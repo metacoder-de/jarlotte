@@ -13,7 +13,7 @@
 
     <servlet>
         <servlet-name>HelloServlet</servlet-name>
-        <servlet-class>name.felixbecker.jarlotte.packagingtest.TestServlet</servlet-class>
+        <servlet-class>de.metacoder.jarlotte.packagingtest.TestServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
