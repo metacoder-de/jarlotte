@@ -30,7 +30,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <groupId>name.felixbecker</groupId>
+    <groupId>de.metacoder</groupId>
     <artifactId>jarlotte</artifactId>
     <version>1.3-SNAPSHOT</version>
     <name>${project.artifactId}</name>
