@@ -32,7 +32,7 @@
 
     <groupId>de.metacoder</groupId>
     <artifactId>jarlotte</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.3</version>
     <name>${project.artifactId}</name>
     <description>
         
@@ -71,7 +71,7 @@
     <scm>
         <connection>scm:git:git@github.com:metacoder/jarlotte.git</connection>
         <developerConnection>scm:git:git@github.com:metacoder/jarlotte.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>jarlotte-1.3</tag>
     </scm>
 
     <issueManagement>
