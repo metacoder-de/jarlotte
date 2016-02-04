@@ -94,7 +94,11 @@ public class JarPackagingMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        new JarPackagingMojoExecutor(this).execute();
+        if("war".equals(project.getPackaging())){
+            new JarPackagingMojoExecutor(this).execute();
+        } else {
+            getLog().info("Not packaging jarlotte jar because packaging is not \"war\" (current: "+project.getPackaging()+")");
+        }
     }
 
 }
