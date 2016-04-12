@@ -16,6 +16,13 @@
 
         <plugins>
             <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <packagingExcludes>WEB-INF/classes/ignoredTestResource.txt</packagingExcludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>de.metacoder</groupId>
                 <artifactId>jarlotte-mojo</artifactId>
                 <version>${project.version}</version>

@@ -34,17 +34,20 @@ class JarPackagingMojoExecutor(mojo: JarPackagingMojo) {
 
     val targetDir = Paths.get(mojo.getProject.getBuild.getDirectory).toFile
     val projectFinalName: String = mojo.getProject.getBuild.getFinalName
-    val buildDir = Paths.get(mojo.getProject.getBuild.getDirectory, projectFinalName).toFile
+    val warFile = Paths.get(mojo.getProject.getBuild.getDirectory, s"$projectFinalName.war").toFile
+    val extractedWarDir = Paths.get(mojo.getProject.getBuild.getDirectory, "extracted-war-jarlotte", projectFinalName)
     val jarlotteZipFileName = s"$projectFinalName-jarlotte.jar"
 
-    if(!buildDir.exists()){
-      throw new MojoFailureException(s"Couldn't find target directory $targetDir. Please make sure that the maven war plugin ran in this phase before (order in xml matters, see effective pom in doubt)!")
+    if(!warFile.exists()){
+      throw new MojoFailureException(s"Couldn't find $warFile. Please make sure that the maven war plugin ran in this phase before (order in xml matters, see effective pom in doubt)!")
     }
+
+    new ZipFile(warFile).extractAll(extractedWarDir.toString)
 
     /* Step 1: Add WAR-Content to jar */
     val zipFile = new ZipFile(Paths.get(targetDir.getAbsolutePath, jarlotteZipFileName).toFile)
     val zipParameters = new ZipParameters
-    zipFile.addFolder(buildDir, zipParameters)
+    zipFile.addFolder(extractedWarDir.toFile, zipParameters)
 
     /* Step 2: Add Jarlotte stuff */
 
