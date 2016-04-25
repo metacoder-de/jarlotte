@@ -20,4 +20,5 @@ public interface JarlotteInitializer {
 
     void initialize(File webAppDir);
 
+    void stop();
 }

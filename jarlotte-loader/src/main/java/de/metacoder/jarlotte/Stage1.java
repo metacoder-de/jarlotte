@@ -47,16 +47,18 @@ public class Stage1 {
 
         System.out.println("Registering shutdown hook");
 
+        final Stage2 stage2 = new Stage2();
+
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
+                stage2.stop();
+
                 System.out.println("Shutdown recognized - deleting working directory " + tempWorkingDir);
                 FileUtils.deleteRecursively(tempWorkingDir);
                 System.out.println("Deleted " + tempWorkingDir + " successfully");
             }
         }));
 
-        new Stage2().run(new File(tempWorkingDir, jarlotteProperties.getProperty("Webapp-Dir-Name")), new File(tempWorkingDir, "jarlotte-lib"), jarlotteProperties.getProperty("Initializer-Class"));
-
+        stage2.run(new File(tempWorkingDir, jarlotteProperties.getProperty("Webapp-Dir-Name")), new File(tempWorkingDir, "jarlotte-lib"), jarlotteProperties.getProperty("Initializer-Class"));
     }
-
 }

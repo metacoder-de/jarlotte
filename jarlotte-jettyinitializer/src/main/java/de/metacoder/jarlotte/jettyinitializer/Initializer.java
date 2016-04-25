@@ -16,21 +16,18 @@ package de.metacoder.jarlotte.jettyinitializer;
 
 import de.metacoder.jarlotte.api.JarlotteInitializer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.Jetty;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 public class Initializer implements JarlotteInitializer {
 
+    private Server server;
+
     public void initialize(File webAppDir) {
-
         try {
-
             final String jettyPortProperty = System.getProperty("jetty.port");
 
             final int jettyPort;
@@ -43,13 +40,11 @@ public class Initializer implements JarlotteInitializer {
                 jettyPort = 8080;
             }
 
-            Server server = new Server(jettyPort);
-
+            server = new Server(jettyPort);
 
             // required for working JSPs
             final Configuration.ClassList classlist = Configuration.ClassList.setServerDefault( server );
             classlist.addBefore("org.eclipse.jetty.webapp.JettyWebXmlConfiguration", "org.eclipse.jetty.annotations.AnnotationConfiguration");
-
 
             WebAppContext wac = new WebAppContext();
             wac.setResourceBase(webAppDir.getAbsolutePath());
@@ -61,9 +56,19 @@ public class Initializer implements JarlotteInitializer {
 
             server.start();
             server.join();
-
         } catch(Exception e){
             e.printStackTrace();
+        }
+    }
+
+    public void stop() {
+        if(server != null && server.isRunning()) {
+            System.out.println("Shutting down Jetty server");
+            try {
+                server.stop();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
