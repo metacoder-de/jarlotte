@@ -25,8 +25,9 @@ import java.util.List;
  */
 public class Stage2 {
 
-    public void run(File webappDir, File jarlotteLibDir, String initializerClassName) throws Exception {
+    private Stage3 stage3;
 
+    public void run(File webappDir, File jarlotteLibDir, String initializerClassName) throws Exception {
         System.out.println("Starting stage 2 on data structure " + webappDir.getAbsolutePath());
 
         System.out.println("Building class loader for initializer");
@@ -42,8 +43,13 @@ public class Stage2 {
         final ClassLoader jarlotteClassLoader = new URLClassLoader(urlsAsArray, getClass().getClassLoader());
 
         System.out.println("Entering Stage 3");
-        new Stage3().run(webappDir, initializerClassName, jarlotteClassLoader);
-
+        stage3 = new Stage3();
+        stage3.run(webappDir, initializerClassName, jarlotteClassLoader);
     }
 
+    public void stop() {
+        if(stage3 != null) {
+            stage3.stop();
+        }
+    }
 }
