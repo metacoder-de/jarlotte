@@ -15,12 +15,15 @@
 package de.metacoder.jarlotte.jettyinitializer;
 
 import de.metacoder.jarlotte.api.JarlotteInitializer;
+import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
 
 public class Initializer implements JarlotteInitializer {
 
@@ -41,6 +44,11 @@ public class Initializer implements JarlotteInitializer {
             }
 
             server = new Server(jettyPort);
+
+            MBeanContainer mbContainer=new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
+            server.addEventListener(mbContainer);
+            server.addBean(mbContainer);
+            server.addBean(Log.getLog());
 
             // required for working JSPs
             final Configuration.ClassList classlist = Configuration.ClassList.setServerDefault( server );
