@@ -28,6 +28,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <nexus.staging.maven.plugin.version>1.6.6</nexus.staging.maven.plugin.version>
+        <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
+        <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
     </properties>
 
     <groupId>de.metacoder</groupId>
@@ -84,7 +88,7 @@
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <groupId>org.apache.maven.plugins</groupId>
-                <version>2.5.3</version>
+                <version>${maven.release.plugin.version}</version>
             </plugin>
         </plugins>
     </build>
@@ -97,7 +101,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
+                        <version>${maven.gpg.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -111,7 +115,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.6</version>
+                        <version>${nexus.staging.maven.plugin.version>}</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
